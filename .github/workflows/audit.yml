@@ -1,0 +1,30 @@
+name: Audit evidence
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  upload-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create evidence file
+        run: |
+          mkdir -p evidence
+          {
+            echo "Automation audit evidence"
+            echo "Repository: mcpmark-eval-liuhezi/github-automation-audit"
+            echo "Generated: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "Run ID: ${GITHUB_RUN_ID}"
+            echo "Run number: ${GITHUB_RUN_NUMBER}"
+            echo "Run attempt: ${GITHUB_RUN_ATTEMPT}"
+            echo "SHA: ${GITHUB_SHA}"
+          } > evidence/audit-evidence.txt
+          cat evidence/audit-evidence.txt
+
+      - name: Upload audit-evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-evidence
+          path: evidence/audit-evidence.txt
+          retention-days: 90
